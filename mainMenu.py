@@ -1,9 +1,5 @@
-#NOTE DI DEBUG: PARE CI SIA UN PROBLEMA NELLA REFERENZA DELLE CARTELLE.
-#CAMBIARE REFERENZE CON I NUOVI PATH, CONSIDERANDO CHE SI CARICHERÁ IN GITHUB
-#
-
-from operations import sourceData, syntheticData, singleCountryDetail
-
+from operations import (sourceData, syntheticData, databaseUtils,  singleCountryDetail)
+from databaseUtils import dbConnection, dbDisconnect
 
 
 def displayMenu():
@@ -14,34 +10,31 @@ def displayMenu():
     print("[3] Country details")
     print()
 
+conn = None  # initialize conn with a default value
+
 displayMenu()
-option = int(input("What do you want to do: "))
+option = (input("What do you want to do: "))
 
-while option != 0:
+while option != '0':
 
-    #Refresh source data
-    if option == 1:
+    # Refresh source data
+    if option == '1':
         print()
         print('''
         ========================================
         |                                      |
-        |      Starting downloading data...    |
+        |      Connection to database...       |
         |                                      |
         ========================================
          ''')
-        sourceData.updateData()
-        print()
-        print('''
-        ========================================
-        |                                      |
-        |     Data downloaded successfully!    |
-        |                                      |
-        ========================================
-         ''')
-        print()
+        if conn == None :
+            conn = dbConnection()
+
+        sourceData.updateData(conn)
+
 
     #Synthetic global report
-    elif option == 2:
+    elif option == '2':
         print()
         print('''
         ========================================
@@ -51,25 +44,29 @@ while option != 0:
         ========================================
          ''')
         print()
-        syntheticData.getSyntheticData()
-        print()
+        if conn == None:
+            conn = dbConnection()
+        syntheticData.getSyntheticData(conn)
+
         print()
 
+
     #Country details
-    elif option == 3:
-        #print("Not implemented yet. Coming soon :)")
-        singleCountryDetail.singleData()
+    elif option == '3':
+        if conn == None:
+            conn = dbConnection()
+        singleCountryDetail.extractData(conn)
 
 
     #Countries comparison
-    elif option == 4:
+    elif option == '4':
         print()
         print('''
-                ========================================
-                |                                      |
-                |  Not implemented yet. Coming soon :) |
-                |                                      |
-                ========================================
+        ========================================
+        |                                      |
+        |  Not implemented yet. Coming soon :) |
+        |                                      |
+        ========================================
                  ''')
         print()
 
@@ -77,15 +74,25 @@ while option != 0:
     else:
         print()
         print('''
-                ========================================
-                |                                      |
-                |     Please choose a valid option.    |
-                |                                      |
-                ========================================
+        ========================================
+        |                                      |
+        |     Please choose a valid option.    |
+        |                                      |
+        ========================================
                  ''')
         print()
     print()
     displayMenu()
-    option = int(input("What do you want to do: "))
+    option = (input("What do you want to do: "))
 
-print("Thanks for using the program.\nGood bye! :D")
+
+print()
+dbDisconnect(conn)
+print('''
+        ========================================
+        |                                      |
+        |     Thanks for using the program     |
+        |             Good bye! :D             |          
+        |                                      |
+        ========================================
+         ''')
