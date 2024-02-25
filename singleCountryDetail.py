@@ -1,7 +1,3 @@
-'''
-- manage exceptions (date not available, data wrong format, Wrong Country) ---> To-Do
-'''
-
 import pandas as pd
 from tabulate import tabulate
 import mysql.connector
